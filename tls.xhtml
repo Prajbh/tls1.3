@@ -1,0 +1,2579 @@
+<?xml version="1.0"?>
+<!-- CPSA 3.6.2 -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <title>TLS 1.3 Protocol Analyser</title>
+ <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+ <style>
+  svg.diagram { border-width: 1px; border-style: solid }
+ </style>
+</head>
+<body>
+
+<pre>(comment &quot;CPSA 3.6.2&quot;)
+(comment &quot;Extracted shapes&quot;)
+(herald &quot;TLS 1.3 Protocol Analyser&quot; (algebra diffie-hellman))
+(comment &quot;CPSA 3.6.2&quot;)
+(comment &quot;All input read from tls.scm&quot;)</pre>
+
+<p id="top">Trees: <a href="#t0">0</a> <a href="#t5">5</a>.</p>
+
+<p id="t0">Tree <a href="#top">0</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 79.920' font-size='12.000'>
+  <text
+   x='89.880' y='26.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k4&quot;, &quot;_self&quot;)'>4</text>
+  <line
+   x1='39.960' y1='39.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k0&quot;, &quot;_self&quot;)'>0</text>
+  </svg></div>
+
+<pre>(defprotocol tls diffie-hellman
+  (defrole initialize
+    (vars (psk skey) (index text))
+    (trace (init (cat psk index)))
+    (uniq-gen index psk))
+  (defrole init
+    (vars (n1 n2 data) (psk skey) (n index text))
+    (trace (obsv (cat psk index)) (send (cat &quot;Client-hello&quot; n1 index))
+      (recv
+        (cat &quot;Server-hello&quot; n2
+          (hash (hash psk &quot;finished&quot;)
+            (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))
+      (send
+        (hash (hash psk &quot;finished&quot;)
+          (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2
+            (hash (hash psk &quot;finished&quot;)
+              (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))))
+      (send (enc n psk))))
+  (defrole resp
+    (vars (n1 n2 data) (psk skey) (index n text))
+    (trace (recv (cat &quot;Client-hello&quot; n1 index)) (obsv (cat psk index))
+      (send
+        (cat &quot;Server-hello&quot; n2
+          (hash (hash psk &quot;finished&quot;)
+            (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))
+      (recv
+        (hash (hash psk &quot;finished&quot;)
+          (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2
+            (hash (hash psk &quot;finished&quot;)
+              (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))))
+      (recv (enc n psk)))))</pre>
+
+<p id="k0">Item <a href="#t0">0</a>, Child: <a href="#k4">4</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='79.920pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 79.920 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='39.960' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: red;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: orange;' cx='39.960' cy='114.960' r='6.000'/>
+   </g>
+  <g><title>((n n) (index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text x='39.960' y='39.960' style='text-anchor: middle;'>tls 0</text>
+  </svg></div>
+
+<pre>(defskeleton tls
+  (vars (index n text) (n1 n2 data) (psk skey))
+  (defstrand init 5 (n n) (index index) (n1 n1) (n2 n2) (psk psk))
+  (non-orig psk)
+  (uniq-orig n1)
+  (label 0)
+  (unrealized (0 0) (0 2))
+  (origs (n1 (0 1)))
+  (comment &quot;1 in cohort - 1 not yet seen&quot;))</pre>
+
+<p id="k4">Item <a href="#t0">4</a>, Parent: <a href="#k0">0</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='279.840pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 279.840 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='239.880' y1='189.960' x2='239.880' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 239.880 339.960 Q 142.920 302.460 45.960 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='239.880' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='239.880' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 92.940 114.960 45.960 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 188.236 187.464 236.553 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='39.960' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='39.960' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 39.960 189.960 Q 136.920 152.460 233.880 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((n n) (index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text
+   x='139.920' y='39.960'
+   style='text-anchor: middle;'>tls 4 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n1 n2 data) (psk skey))
+  (defstrand init 5 (n n) (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1) (n2 n2) (psk psk))
+  (precedes ((0 1) (2 0)) ((1 0) (0 0)) ((1 0) (2 1)) ((2 2) (0 2)))
+  (leadsto ((1 0) (0 0)) ((1 0) (2 1)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n1)
+  (operation state-passing-test (displaced 3 1 initialize 1)
+    (cat psk index) (2 1))
+  (label 4)
+  (parent 0)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n1 n1) (n2 n2) (index index) (n n))))
+  (origs (n1 (0 1))))</pre>
+
+<p id="t5">Tree <a href="#top">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='1129.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 1129.920' font-size='12.000'>
+  <text
+   x='89.880' y='1076.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k51&quot;, &quot;_self&quot;)'>51</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='1089.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='1001.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k49&quot;, &quot;_self&quot;)'>49</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='1014.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='926.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k48&quot;, &quot;_self&quot;)'>48</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='939.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='851.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k47&quot;, &quot;_self&quot;)'>47</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='864.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='776.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k46&quot;, &quot;_self&quot;)'>46</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='789.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='701.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k45&quot;, &quot;_self&quot;)'>45</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='714.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='626.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k39&quot;, &quot;_self&quot;)'>39</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='639.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='551.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k38&quot;, &quot;_self&quot;)'>38</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='564.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='476.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k36&quot;, &quot;_self&quot;)'>36</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='401.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k35&quot;, &quot;_self&quot;)'>35</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='326.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k32&quot;, &quot;_self&quot;)'>32</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='251.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k22&quot;, &quot;_self&quot;)'>22</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='264.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='176.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k19&quot;, &quot;_self&quot;)'>19</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='101.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k17&quot;, &quot;_self&quot;)'>17</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='26.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k12&quot;, &quot;_self&quot;)'>12</text>
+  <line
+   x1='39.960' y1='564.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='551.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k5&quot;, &quot;_self&quot;)'>5</text>
+  </svg></div>
+
+<pre>(defprotocol tls diffie-hellman
+  (defrole initialize
+    (vars (psk skey) (index text))
+    (trace (init (cat psk index)))
+    (uniq-gen index psk))
+  (defrole init
+    (vars (n1 n2 data) (psk skey) (n index text))
+    (trace (obsv (cat psk index)) (send (cat &quot;Client-hello&quot; n1 index))
+      (recv
+        (cat &quot;Server-hello&quot; n2
+          (hash (hash psk &quot;finished&quot;)
+            (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))
+      (send
+        (hash (hash psk &quot;finished&quot;)
+          (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2
+            (hash (hash psk &quot;finished&quot;)
+              (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))))
+      (send (enc n psk))))
+  (defrole resp
+    (vars (n1 n2 data) (psk skey) (index n text))
+    (trace (recv (cat &quot;Client-hello&quot; n1 index)) (obsv (cat psk index))
+      (send
+        (cat &quot;Server-hello&quot; n2
+          (hash (hash psk &quot;finished&quot;)
+            (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))
+      (recv
+        (hash (hash psk &quot;finished&quot;)
+          (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2
+            (hash (hash psk &quot;finished&quot;)
+              (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))))
+      (recv (enc n psk)))))</pre>
+
+<p id="k5">Item <a href="#t5">5</a>, Children: <a href="#k12">12</a> <a href="#k17">17</a> <a href="#k19">19</a> <a href="#k22">22</a> <a href="#k32">32</a> <a href="#k35">35</a> <a href="#k36">36</a> <a href="#k38">38</a> <a href="#k39">39</a> <a href="#k45">45</a> <a href="#k46">46</a> <a href="#k47">47</a> <a href="#k48">48</a> <a href="#k49">49</a> <a href="#k51">51</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='79.920pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 79.920 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: red;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: red;' cx='39.960' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: orange;' cx='39.960' cy='189.960' r='6.000'/>
+   </g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text x='39.960' y='39.960' style='text-anchor: middle;'>tls 5</text>
+  </svg></div>
+
+<pre>(defskeleton tls
+  (vars (index n text) (n2 n1 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (non-orig psk)
+  (uniq-orig n2)
+  (label 5)
+  (unrealized (0 1) (0 3) (0 4))
+  (origs (n2 (0 2)))
+  (comment &quot;1 in cohort - 1 not yet seen&quot;))</pre>
+
+<p id="k12">Item <a href="#t5">12</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='279.840pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 279.840 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 239.880 489.960 Q 142.920 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='239.880' cy='489.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 142.920 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 136.920 302.460 233.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((n n) (index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='139.920' y='39.960'
+   style='text-anchor: middle;'>tls 12 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n1 n2 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1) (n2 n2) (psk psk))
+  (precedes ((0 2) (2 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((2 1) (0 0))
+    ((2 3) (0 3)) ((2 4) (0 4)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation encryption-test (displaced 2 3 init 5) (enc n psk) (0 4))
+  (label 12)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k17">Item <a href="#t5">17</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='379.800pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 379.800 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='339.840' y1='189.960' x2='339.840' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 339.840 489.960 Q 192.900 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='339.840' cy='489.960' r='6.000'/></g>
+  <path
+   d='M 339.840 414.960 Q 192.900 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-0 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='339.840' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 237.071 113.906 334.222 187.853'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-0 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 186.900 302.460 333.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((n n) (index index) (n1 n1-0) (n2 n2) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1-0) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='189.900' y='39.960'
+   style='text-anchor: middle;'>tls 17 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n1 n1-0 n2 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1-0) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 2 (index index) (n1 n1) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-0) (n2 n2) (psk psk))
+  (precedes ((0 2) (3 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((2 1) (0 0)) ((3 3) (0 3)) ((3 4) (0 4)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation encryption-test (displaced 3 4 init 5) (enc n psk) (0 4))
+  (label 17)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1-0) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k19">Item <a href="#t5">19</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='379.800pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 379.800 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='339.840' y1='189.960' x2='339.840' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 339.840 489.960 Q 192.900 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='339.840' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 142.920 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 237.071 113.906 334.222 187.853'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 136.920 302.460 233.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 39.960 339.960 Q 186.900 302.460 333.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((n n) (index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='189.900' y='39.960'
+   style='text-anchor: middle;'>tls 19 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1) (n2 n2) (psk psk))
+  (precedes ((0 2) (2 2)) ((0 2) (3 2)) ((1 0) (0 1)) ((1 0) (2 0))
+    ((1 0) (3 0)) ((2 1) (0 0)) ((2 3) (0 3)) ((3 4) (0 4)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation encryption-test (displaced 4 0 resp 3)
+    (hash (hash psk &quot;finished&quot;)
+      (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)) (3 2))
+  (label 19)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k22">Item <a href="#t5">22</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='379.800pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 379.800 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='339.840' y1='114.960' x2='339.840' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='189.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 339.840 489.960 Q 192.900 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 339.840 189.960 Q 192.900 152.460 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='339.840' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 142.920 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 187.500 150.660 235.081 186.359'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 236.880 77.460 333.840 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 136.920 302.460 233.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 39.960 339.960 Q 186.900 302.460 333.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((n n) (index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='189.900' y='39.960'
+   style='text-anchor: middle;'>tls 22 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1) (n2 n2) (psk psk))
+  (precedes ((0 2) (2 2)) ((0 2) (3 2)) ((1 0) (0 1)) ((1 0) (2 0))
+    ((1 0) (3 0)) ((2 3) (0 3)) ((3 1) (0 0)) ((3 4) (0 4)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation encryption-test (displaced 4 0 resp 3)
+    (hash (hash psk &quot;finished&quot;)
+      (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)) (3 2))
+  (label 22)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k32">Item <a href="#t5">32</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='479.760pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 479.760 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='189.960' x2='339.840' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 439.800 489.960 Q 242.880 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='439.800' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='439.800' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 414.960 Q 192.900 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='339.840' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 237.071 113.906 334.222 187.853'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 286.950 114.232 433.979 188.504'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 186.900 302.460 333.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 39.960 339.960 Q 236.880 302.460 433.800 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((n n) (index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1-0) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='239.880' y='39.960'
+   style='text-anchor: middle;'>tls 32 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 2 (index index) (n1 n1-0) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1) (n2 n2) (psk psk))
+  (precedes ((0 2) (3 2)) ((0 2) (4 2)) ((1 0) (0 1)) ((1 0) (2 0))
+    ((1 0) (3 0)) ((1 0) (4 0)) ((2 1) (0 0)) ((3 3) (0 3))
+    ((4 4) (0 4)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 0)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation encryption-test (displaced 5 0 resp 3)
+    (hash (hash psk &quot;finished&quot;)
+      (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0)) (4 2))
+  (label 32)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k35">Item <a href="#t5">35</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='479.760pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 479.760 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='189.960' x2='339.840' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 439.800 339.960 Q 392.820 339.960 345.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle style='fill: blue;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 489.960 Q 192.900 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='339.840' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 142.920 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 239.880 189.960 Q 336.840 152.460 433.800 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 237.071 113.906 334.222 187.853'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 287.177 151.118 434.434 262.276'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 136.920 302.460 233.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='239.880' y='39.960'
+   style='text-anchor: middle;'>tls 35 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n2-0 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (precedes ((0 2) (2 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 1)) ((2 1) (0 0)) ((2 1) (4 0)) ((2 3) (0 3))
+    ((3 4) (0 4)) ((4 2) (3 2)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 1)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 5 1 initialize 1)
+    (cat psk index) (4 1))
+  (label 35)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k36">Item <a href="#t5">36</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='479.760pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 479.760 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='114.960' x2='339.840' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 439.800 339.960 Q 392.820 339.960 345.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle style='fill: blue;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 489.960 Q 192.900 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 339.840 189.960 Q 386.820 189.960 433.800 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='339.840' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 142.920 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 236.880 77.460 333.840 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 287.177 151.118 434.434 262.276'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 136.920 302.460 233.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='239.880' y='39.960'
+   style='text-anchor: middle;'>tls 36 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n2-0 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (precedes ((0 2) (2 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 1)) ((2 1) (0 0)) ((2 3) (0 3)) ((3 1) (4 0))
+    ((3 4) (0 4)) ((4 2) (3 2)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 1)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 5 1 initialize 1)
+    (cat psk index) (4 1))
+  (label 36)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k38">Item <a href="#t5">38</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='479.760pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 479.760 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='114.960' x2='339.840' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 439.800 339.960 Q 392.820 339.960 345.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle style='fill: blue;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 489.960 Q 192.900 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 339.840 189.960 Q 192.900 152.460 45.960 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='339.840' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 142.920 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 336.840 152.460 433.800 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 236.880 77.460 333.840 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 287.177 151.118 434.434 262.276'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 136.920 302.460 233.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='239.880' y='39.960'
+   style='text-anchor: middle;'>tls 38 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n2-0 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (precedes ((0 2) (2 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 1)) ((2 1) (4 0)) ((2 3) (0 3)) ((3 1) (0 0))
+    ((3 4) (0 4)) ((4 2) (3 2)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 1)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 5 1 initialize 1)
+    (cat psk index) (4 1))
+  (label 38)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k39">Item <a href="#t5">39</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='479.760pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 479.760 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='114.960' x2='339.840' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='189.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 439.800 339.960 Q 392.820 339.960 345.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle style='fill: blue;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 489.960 Q 192.900 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 339.840 189.960 Q 192.900 152.460 45.960 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 339.840 189.960 Q 386.820 189.960 433.800 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='339.840' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 142.920 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 187.500 150.660 235.081 186.359'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 236.880 77.460 333.840 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 287.177 151.118 434.434 262.276'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 136.920 302.460 233.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='239.880' y='39.960'
+   style='text-anchor: middle;'>tls 39 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n2-0 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (precedes ((0 2) (2 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 1)) ((2 3) (0 3)) ((3 1) (0 0)) ((3 1) (4 0))
+    ((3 4) (0 4)) ((4 2) (3 2)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 1)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 5 1 initialize 1)
+    (cat psk index) (4 1))
+  (label 39)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k45">Item <a href="#t5">45</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='579.720pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 579.720 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='539.760' y1='114.960' x2='539.760' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='189.960' x2='339.840' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 539.760 189.960 Q 492.780 189.960 445.800 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle cx='539.760' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='539.760' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 439.800 339.960 Q 392.820 339.960 345.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle style='fill: blue;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 489.960 Q 192.900 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='339.840' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 142.920 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 237.071 113.906 334.222 187.853'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 287.177 151.118 434.434 262.276'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 336.840 77.460 533.760 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 136.920 302.460 233.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-1) (psk psk))</title>
+   <text x='539.760' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='289.860' y='39.960'
+   style='text-anchor: middle;'>tls 45 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n2-0 n1-1 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (defstrand init 2 (index index) (n1 n1-1) (psk psk))
+  (precedes ((0 2) (2 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 1)) ((1 0) (5 0)) ((2 1) (0 0)) ((2 3) (0 3))
+    ((3 4) (0 4)) ((4 2) (3 2)) ((5 1) (4 0)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 1))
+    ((1 0) (5 0)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 6 1 initialize 1)
+    (cat psk index) (4 1))
+  (label 45)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k46">Item <a href="#t5">46</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='579.720pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 579.720 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='539.760' y1='114.960' x2='539.760' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='114.960' x2='339.840' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='189.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 539.760 189.960 Q 492.780 189.960 445.800 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle cx='539.760' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='539.760' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 439.800 339.960 Q 392.820 339.960 345.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle style='fill: blue;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 489.960 Q 192.900 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-0 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 339.840 189.960 Q 192.900 152.460 45.960 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='339.840' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 142.920 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='239.880' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 187.500 150.660 235.081 186.359'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 236.880 77.460 333.840 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 287.177 151.118 434.434 262.276'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 336.840 77.460 533.760 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 136.920 302.460 233.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-1) (psk psk))</title>
+   <text x='539.760' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='289.860' y='39.960'
+   style='text-anchor: middle;'>tls 46 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n2-0 n1-1 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-0) (n2 n2-0) (psk psk))
+  (defstrand init 2 (index index) (n1 n1-1) (psk psk))
+  (precedes ((0 2) (2 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 1)) ((1 0) (5 0)) ((2 3) (0 3)) ((3 1) (0 0))
+    ((3 4) (0 4)) ((4 2) (3 2)) ((5 1) (4 0)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 1))
+    ((1 0) (5 0)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 6 1 initialize 1)
+    (cat psk index) (4 1))
+  (label 46)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k47">Item <a href="#t5">47</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='579.720pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 579.720 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='539.760' y1='189.960' x2='539.760' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='189.960' x2='339.840' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 539.760 339.960 Q 492.780 339.960 445.800 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='539.760' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='539.760' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle style='fill: blue;' cx='539.760' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 439.800 489.960 Q 242.880 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='439.800' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='439.800' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 414.960 Q 192.900 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='339.840' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 239.880 189.960 Q 386.820 152.460 533.760 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 237.071 113.906 334.222 187.853'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 286.950 114.232 433.979 188.504'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 337.031 151.406 534.142 262.852'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 186.900 302.460 333.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-1) (n2 n2-0) (psk psk))</title>
+   <text x='539.760' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-1) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1-0) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='289.860' y='39.960'
+   style='text-anchor: middle;'>tls 47 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n1-1 n2-0 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 2 (index index) (n1 n1-0) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-1) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-1) (n2 n2-0) (psk psk))
+  (precedes ((0 2) (3 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 0)) ((1 0) (5 1)) ((2 1) (0 0)) ((2 1) (5 0))
+    ((3 3) (0 3)) ((4 4) (0 4)) ((5 2) (4 2)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 0))
+    ((1 0) (5 1)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 6 1 initialize 1)
+    (cat psk index) (5 1))
+  (label 47)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k48">Item <a href="#t5">48</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='579.720pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 579.720 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='539.760' y1='189.960' x2='539.760' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='114.960' x2='339.840' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 539.760 339.960 Q 492.780 339.960 445.800 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='539.760' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='539.760' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle style='fill: blue;' cx='539.760' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 439.800 489.960 Q 242.880 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='439.800' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='439.800' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 414.960 Q 192.900 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 339.840 189.960 Q 436.800 152.460 533.760 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='339.840' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 236.880 77.460 333.840 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 286.950 114.232 433.979 188.504'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 337.031 151.406 534.142 262.852'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 186.900 302.460 333.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-1) (n2 n2-0) (psk psk))</title>
+   <text x='539.760' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-1) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1-0) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='289.860' y='39.960'
+   style='text-anchor: middle;'>tls 48 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n1-1 n2-0 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 2 (index index) (n1 n1-0) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-1) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-1) (n2 n2-0) (psk psk))
+  (precedes ((0 2) (3 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 0)) ((1 0) (5 1)) ((2 1) (0 0)) ((3 1) (5 0))
+    ((3 3) (0 3)) ((4 4) (0 4)) ((5 2) (4 2)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 0))
+    ((1 0) (5 1)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 6 1 initialize 1)
+    (cat psk index) (5 1))
+  (label 48)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k49">Item <a href="#t5">49</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='579.720pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 579.720 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='539.760' y1='189.960' x2='539.760' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='114.960' x2='439.800' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='189.960' x2='339.840' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 539.760 339.960 Q 492.780 339.960 445.800 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='539.760' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='539.760' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle style='fill: blue;' cx='539.760' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 439.800 489.960 Q 242.880 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='439.800' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='439.800' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 439.800 189.960 Q 486.780 189.960 533.760 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle cx='439.800' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 339.840 414.960 Q 192.900 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='339.840' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 237.071 113.906 334.222 187.853'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 286.860 77.460 433.800 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 337.031 151.406 534.142 262.852'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 186.900 302.460 333.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-1) (n2 n2-0) (psk psk))</title>
+   <text x='539.760' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-1) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1-0) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='289.860' y='39.960'
+   style='text-anchor: middle;'>tls 49 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n1-1 n2-0 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 2 (index index) (n1 n1-0) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-1) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-1) (n2 n2-0) (psk psk))
+  (precedes ((0 2) (3 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 0)) ((1 0) (5 1)) ((2 1) (0 0)) ((3 3) (0 3))
+    ((4 1) (5 0)) ((4 4) (0 4)) ((5 2) (4 2)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 0))
+    ((1 0) (5 1)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 6 1 initialize 1)
+    (cat psk index) (5 1))
+  (label 49)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+<p id="k51">Item <a href="#t5">51</a>, Parent: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='679.680pt' height='529.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 679.680 529.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='639.720' y1='114.960' x2='639.720' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='539.760' y1='189.960' x2='539.760' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='189.960' x2='339.840' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='189.960' x2='39.960' y2='489.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 639.720 189.960 Q 592.740 189.960 545.760 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-2 index)</title>
+   <circle cx='639.720' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='639.720' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 539.760 339.960 Q 492.780 339.960 445.800 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle cx='539.760' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='539.760' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle style='fill: blue;' cx='539.760' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 439.800 489.960 Q 242.880 452.460 45.960 489.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc n psk)</title>
+   <circle cx='439.800' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0))))</title>
+   <circle cx='439.800' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2-0 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1-1 index &quot;Server-Hello&quot; n2-0)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1-1 index)</title>
+   <circle cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 414.960 Q 192.900 377.460 45.960 414.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle cx='339.840' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='339.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle cx='339.840' cy='264.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='339.840' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 142.920 152.460 45.960 189.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat &quot;Client-hello&quot; n1-0 index)</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 114.960 Q 91.604 187.464 43.287 259.967'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 186.900 114.960 233.880 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 237.071 113.906 334.222 187.853'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 286.950 114.232 433.979 188.504'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 337.031 151.406 534.142 262.852'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 139.920 114.960 Q 386.820 77.460 633.720 114.960'
+   style='stroke-width: 0.960; stroke: blue; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc n psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(hash (hash psk &quot;finished&quot;) (hash &quot;Client-hello&quot; n1 index &quot;Server-Hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2))))</title>
+   <circle style='fill: blue;' cx='39.960' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 39.960 339.960 Q 186.900 302.460 333.840 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat &quot;Server-hello&quot; n2 (hash (hash psk &quot;finished&quot;) (hash &quot;Client-Hello&quot; n1 index &quot;Server-Hello&quot; n2)))</title>
+   <circle cx='39.960' cy='339.960' r='6.000'/></g>
+  <g><title>(cat psk index)</title>
+   <circle style='fill: gray;' cx='39.960' cy='264.960' r='6.000'/></g>
+  <g><title>(cat &quot;Client-hello&quot; n1 index)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>((index index) (n1 n1-2) (psk psk))</title>
+   <text x='639.720' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1-1) (n2 n2-0) (psk psk))</title>
+   <text x='539.760' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((n n) (index index) (n1 n1-1) (n2 n2-0) (psk psk))</title>
+   <text x='439.800' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='339.840' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (n1 n1-0) (psk psk))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((index index) (psk psk))</title>
+   <text
+    x='139.920' y='77.460'
+    style='text-anchor: middle;'>initialize</text></g>
+  <g><title>((index index) (n n) (n1 n1) (n2 n2) (psk psk))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='339.840' y='39.960'
+   style='text-anchor: middle;'>tls 51 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (n index text) (n2 n1 n1-0 n1-1 n2-0 n1-2 data) (psk skey))
+  (defstrand resp 5 (index index) (n n) (n1 n1) (n2 n2) (psk psk))
+  (defstrand initialize 1 (index index) (psk psk))
+  (defstrand init 2 (index index) (n1 n1-0) (psk psk))
+  (defstrand init 4 (index index) (n1 n1) (n2 n2) (psk psk))
+  (defstrand init 5 (n n) (index index) (n1 n1-1) (n2 n2-0) (psk psk))
+  (defstrand resp 3 (index index) (n1 n1-1) (n2 n2-0) (psk psk))
+  (defstrand init 2 (index index) (n1 n1-2) (psk psk))
+  (precedes ((0 2) (3 2)) ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0))
+    ((1 0) (4 0)) ((1 0) (5 1)) ((1 0) (6 0)) ((2 1) (0 0))
+    ((3 3) (0 3)) ((4 4) (0 4)) ((5 2) (4 2)) ((6 1) (5 0)))
+  (leadsto ((1 0) (0 1)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 0) (4 0))
+    ((1 0) (5 1)) ((1 0) (6 0)))
+  (non-orig psk)
+  (uniq-gen index psk)
+  (uniq-orig n2)
+  (operation state-passing-test (displaced 7 1 initialize 1)
+    (cat psk index) (5 1))
+  (label 51)
+  (parent 5)
+  (unrealized)
+  (shape)
+  (maps ((0) ((psk psk) (n2 n2) (index index) (n1 n1) (n n))))
+  (origs (n2 (0 2))))</pre>
+
+</body>
+</html>

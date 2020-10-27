@@ -6,10 +6,10 @@
   (hash psk "finished"))
 
 (defmacro (serverfinished psk index n1 n2)
-  (hash (finkey psk) (hash "Client-Hello" n1 index "Server-Hello" n2)))
+  (hash (finkey psk) (hash "Client-Hello" n1 index "Server-Hello" n2 (enc b psk))))
 
 (defmacro (clientfinished psk index n1 n2)
-  (hash (finkey psk) (hash "Client-hello" n1 index "Server-Hello" n2 (serverfinished psk index n1 n2))))
+  (hash (finkey psk) (hash "Client-hello" n1 index "Server-Hello" n2 (enc b psk) (serverfinished psk index n1 n2))))
 
 (defprotocol tls diffie-hellman
   (defrole initialize
@@ -17,42 +17,59 @@
     (trace
      (init (cat psk index)))
     (uniq-gen psk index))
-
  ;; client side                                  
- (defrole client
+ (defrole init
    (vars (a b name)(m d text)(n1 n2 data)(psk skey)(n index text))
    (trace
+    ;;(send a)
+    ;;(recv index)
     (obsv (cat psk index))
     (send (cat "Client-hello" n1 index))
-    (recv (cat "Server-hello" n2 (serverfinished psk index n1 n2)))
+    (recv (cat "Server-hello" n2 (enc b psk) (serverfinished psk index n1 n2)))
     (send (clientfinished psk index n1 n2))
     (send (enc n psk)))
+   ;; (send (enc m (appkey psk index n1 n2)))
+   ;;(non-orig index)
     )
-
+   ;;(recv (cat "hello-received" index)
     
  ;;server side                                   
- (defrole server
+ (defrole resp
   (vars (a b name)(m d text)(n1 n2 data)(psk skey)(index n text))
    (trace
     (recv (cat "Client-hello" n1 index))
     (obsv (cat psk index))
-    (send (cat "Server-hello" n2 (serverfinished psk index n1 n2)))
+    (send (cat "Server-hello" n2 (enc b psk) (serverfinished psk index n1 n2)))
     (recv (clientfinished psk index n1 n2))
     (recv (enc n psk)))
+   ;; (recv (enc m (appkey psk index n1 n2))))
+   ;;(non-orig index)
    ))
 
 ;;skeleton for client point of view              
 (defskeleton tls
   (vars (a b name)(psk skey)(n1 n2 data)(index text))
-  (defstrand client 5 (psk psk)(index index)(n1 n1)(n2 n2)) 
+  (defstrand init 5 (psk psk)(index index)(n1 n1)(n2 n2)) 
   (non-orig psk)
   (uniq-orig n1)
+  ;;(non-orig fkey)
   )
-                           
+;;(pen-non-orig psk))                           
 (defskeleton tls
   (vars (a b name)(psk skey)(n1 n2 data)(index text))
-  (defstrand server 5 (psk psk)(index index)(n2 n2))
+  (defstrand resp 5 (psk psk)(index index)(n2 n2))
   (non-orig psk)
   (uniq-orig n2)
+  ;;(non-orig fkey)
 )
 
+;(defskeleton tls
+;  (vars (a name)(psk skey))
+;  (defstrand init 3 (a a)(psk psk))
+;  (defstrand resp 3 (a b)(b a)(psk psk))         
+;  (non-orig psk))
+;;(pen-non-orig psk))                             
+;(defskeleton tls
+;  (vars (a b name)(psk skey))
+;  (defstrand resp 2 (b b)(a a)(psk psk))
+;  (non-orig psk))
