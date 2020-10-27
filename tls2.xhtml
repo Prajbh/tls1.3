@@ -1,0 +1,792 @@
+<?xml version="1.0"?>
+<!-- CPSA 3.6.2 -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <title>TLS 1.3 Protocol Analyser</title>
+ <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+ <style>
+  svg.diagram { border-width: 1px; border-style: solid }
+ </style>
+</head>
+<body>
+
+<pre>(herald &quot;TLS 1.3 Protocol Analyser&quot; (algebra diffie-hellman))
+(comment &quot;CPSA 3.6.2&quot;)
+(comment &quot;All input read from tls2.scm&quot;)</pre>
+
+<p id="top">Trees: <a href="#t0">0</a> <a href="#t4">4</a> <a href="#t6">6</a> <a href="#t10">10</a>.</p>
+
+<p id="t0">Tree <a href="#top">0</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.760pt' height='154.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.760 154.920' font-size='12.000'>
+  <text
+   x='139.800' y='101.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k3&quot;, &quot;_self&quot;)'>3</text>
+  <line
+   x1='89.880' y1='77.460' x2='139.800' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='139.800' y='26.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k2&quot;, &quot;_self&quot;)'>2</text>
+  <line
+   x1='89.880' y1='77.460' x2='139.800' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='63.540' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k1&quot;, &quot;_self&quot;)'>1</text>
+  <line
+   x1='39.960' y1='77.460' x2='89.880' y2='77.460'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='63.540' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k0&quot;, &quot;_self&quot;)'>0</text>
+  </svg></div>
+
+<pre>(defprotocol tls diffie-hellman
+  (defrole init
+    (vars (a b name) (m text) (psk k skey))
+    (trace (send (cat (enc k m) (enc &quot;hello&quot; a b psk)))
+      (recv (enc &quot;hello-received&quot; a psk))))
+  (defrole resp
+    (vars (a b name) (m text) (psk k skey))
+    (trace (recv (cat (enc k m) (enc &quot;hello&quot; a b psk)))
+      (send (enc &quot;hello-received&quot; a psk)))))</pre>
+
+<p id="k0">Item <a href="#t0">0</a>, Child: <a href="#k1">1</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='79.920pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 79.920 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle style='fill: red;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text x='39.960' y='39.960' style='text-anchor: middle;'>tls 0</text>
+  </svg></div>
+
+<pre>(defskeleton tls
+  (vars (m text) (a b name) (psk k skey))
+  (defstrand init 2 (m m) (a a) (b b) (psk psk) (k k))
+  (non-orig psk)
+  (label 0)
+  (unrealized (0 1))
+  (origs)
+  (comment &quot;1 in cohort - 1 not yet seen&quot;))</pre>
+
+<p id="k1">Item <a href="#t0">1</a>, Parent: <a href="#k0">0</a>, Children: <a href="#k2">2</a> <a href="#k3">3</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 139.920 189.960 Q 92.940 189.960 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(cat (enc k-0 m-0) (enc &quot;hello&quot; a b-0 psk))</title>
+   <circle style='fill: red;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m-0) (a a) (b b-0) (psk psk) (k k-0))</title>
+   <text x='139.920' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text x='89.940' y='39.960' style='text-anchor: middle;'>tls 1</text>
+  </svg></div>
+
+<pre>(defskeleton tls
+  (vars (m m-0 text) (a b b-0 name) (psk k k-0 skey))
+  (defstrand init 2 (m m) (a a) (b b) (psk psk) (k k))
+  (defstrand resp 2 (m m-0) (a a) (b b-0) (psk psk) (k k-0))
+  (precedes ((1 1) (0 1)))
+  (non-orig psk)
+  (operation encryption-test (added-strand resp 2)
+    (enc &quot;hello-received&quot; a psk) (0 1))
+  (label 1)
+  (parent 0)
+  (unrealized (1 0))
+  (comment &quot;2 in cohort - 2 not yet seen&quot;))</pre>
+
+<p id="k2">Item <a href="#t0">2</a>, Parent: <a href="#k1">1</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 139.920 189.960 Q 92.940 189.960 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k-0 m-0) (enc &quot;hello&quot; a b psk))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 39.960 114.960 Q 86.940 114.960 133.920 114.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m-0) (a a) (b b) (psk psk) (k k-0))</title>
+   <text x='139.920' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text
+   x='89.940' y='39.960'
+   style='text-anchor: middle;'>tls 2 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (m m-0 text) (a b name) (psk k k-0 skey))
+  (defstrand init 2 (m m) (a a) (b b) (psk psk) (k k))
+  (defstrand resp 2 (m m-0) (a a) (b b) (psk psk) (k k-0))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (non-orig psk)
+  (operation encryption-test (displaced 2 0 init 1)
+    (enc &quot;hello&quot; a b-0 psk) (1 0))
+  (label 2)
+  (parent 1)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (psk psk) (k k) (m m))))
+  (origs))</pre>
+
+<p id="k3">Item <a href="#t0">3</a>, Parent: <a href="#k1">1</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='279.840pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 279.840 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 239.880 114.960 Q 192.900 114.960 145.920 114.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat (enc k-1 m-1) (enc &quot;hello&quot; a b-0 psk))</title>
+   <circle cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 189.960 Q 92.940 189.960 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(cat (enc k-0 m-0) (enc &quot;hello&quot; a b-0 psk))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m-1) (a a) (b b-0) (psk psk) (k k-1))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((m m-0) (a a) (b b-0) (psk psk) (k k-0))</title>
+   <text x='139.920' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text
+   x='139.920' y='39.960'
+   style='text-anchor: middle;'>tls 3 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (m m-0 m-1 text) (a b b-0 name) (psk k k-0 k-1 skey))
+  (defstrand init 2 (m m) (a a) (b b) (psk psk) (k k))
+  (defstrand resp 2 (m m-0) (a a) (b b-0) (psk psk) (k k-0))
+  (defstrand init 1 (m m-1) (a a) (b b-0) (psk psk) (k k-1))
+  (precedes ((1 1) (0 1)) ((2 0) (1 0)))
+  (non-orig psk)
+  (operation encryption-test (added-strand init 1)
+    (enc &quot;hello&quot; a b-0 psk) (1 0))
+  (label 3)
+  (parent 1)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (psk psk) (k k) (m m))))
+  (origs))</pre>
+
+<p id="t4">Tree <a href="#top">4</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 79.920' font-size='12.000'>
+  <text
+   x='89.880' y='26.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k5&quot;, &quot;_self&quot;)'>5</text>
+  <line
+   x1='39.960' y1='39.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k4&quot;, &quot;_self&quot;)'>4</text>
+  </svg></div>
+
+<pre>(defprotocol tls diffie-hellman
+  (defrole init
+    (vars (a b name) (m text) (psk k skey))
+    (trace (send (cat (enc k m) (enc &quot;hello&quot; a b psk)))
+      (recv (enc &quot;hello-received&quot; a psk))))
+  (defrole resp
+    (vars (a b name) (m text) (psk k skey))
+    (trace (recv (cat (enc k m) (enc &quot;hello&quot; a b psk)))
+      (send (enc &quot;hello-received&quot; a psk)))))</pre>
+
+<p id="k4">Item <a href="#t4">4</a>, Child: <a href="#k5">5</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='79.920pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 79.920 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text x='39.960' y='39.960' style='text-anchor: middle;'>tls 4</text>
+  </svg></div>
+
+<pre>(defskeleton tls
+  (vars (m text) (a b name) (psk k skey))
+  (defstrand resp 2 (m m) (a a) (b b) (psk psk) (k k))
+  (non-orig psk)
+  (label 4)
+  (unrealized (0 0))
+  (origs)
+  (comment &quot;1 in cohort - 1 not yet seen&quot;))</pre>
+
+<p id="k5">Item <a href="#t4">5</a>, Parent: <a href="#k4">4</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 139.920 114.960 Q 92.940 114.960 45.960 114.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat (enc k-0 m-0) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle style='fill: blue;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m-0) (a a) (b b) (psk psk) (k k-0))</title>
+   <text x='139.920' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='89.940' y='39.960'
+   style='text-anchor: middle;'>tls 5 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (m m-0 text) (a b name) (psk k k-0 skey))
+  (defstrand resp 2 (m m) (a a) (b b) (psk psk) (k k))
+  (defstrand init 1 (m m-0) (a a) (b b) (psk psk) (k k-0))
+  (precedes ((1 0) (0 0)))
+  (non-orig psk)
+  (operation encryption-test (added-strand init 1) (enc &quot;hello&quot; a b psk)
+    (0 0))
+  (label 5)
+  (parent 4)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (psk psk) (k k) (m m))))
+  (origs))</pre>
+
+<p id="t6">Tree <a href="#top">6</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.760pt' height='154.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.760 154.920' font-size='12.000'>
+  <text
+   x='139.800' y='101.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k9&quot;, &quot;_self&quot;)'>9</text>
+  <line
+   x1='89.880' y1='77.460' x2='139.800' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='139.800' y='26.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k8&quot;, &quot;_self&quot;)'>8</text>
+  <line
+   x1='89.880' y1='77.460' x2='139.800' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='89.880' y='63.540' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k7&quot;, &quot;_self&quot;)'>7</text>
+  <line
+   x1='39.960' y1='77.460' x2='89.880' y2='77.460'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='63.540' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k6&quot;, &quot;_self&quot;)'>6</text>
+  </svg></div>
+
+<pre>(defprotocol tls diffie-hellman
+  (defrole init
+    (vars (a b name) (m text) (psk k skey))
+    (trace (send (cat (enc k m) (enc &quot;hello&quot; a b psk)))
+      (recv (enc &quot;hello-received&quot; a psk))))
+  (defrole resp
+    (vars (a b name) (m text) (psk k skey))
+    (trace (recv (cat (enc k m) (enc &quot;hello&quot; a b psk)))
+      (send (enc &quot;hello-received&quot; a psk)))))</pre>
+
+<p id="k6">Item <a href="#t6">6</a>, Child: <a href="#k7">7</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='79.920pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 79.920 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle style='fill: red;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text x='39.960' y='39.960' style='text-anchor: middle;'>tls 6</text>
+  </svg></div>
+
+<pre>(defskeleton tls
+  (vars (m text) (a b name) (psk k skey))
+  (defstrand init 2 (m m) (a a) (b b) (psk psk) (k k))
+  (non-orig psk)
+  (label 6)
+  (unrealized (0 1))
+  (origs)
+  (comment &quot;1 in cohort - 1 not yet seen&quot;))</pre>
+
+<p id="k7">Item <a href="#t6">7</a>, Parent: <a href="#k6">6</a>, Children: <a href="#k8">8</a> <a href="#k9">9</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 139.920 189.960 Q 92.940 189.960 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(cat (enc k-0 m-0) (enc &quot;hello&quot; a b-0 psk))</title>
+   <circle style='fill: red;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m-0) (a a) (b b-0) (psk psk) (k k-0))</title>
+   <text x='139.920' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text x='89.940' y='39.960' style='text-anchor: middle;'>tls 7</text>
+  </svg></div>
+
+<pre>(defskeleton tls
+  (vars (m m-0 text) (a b b-0 name) (psk k k-0 skey))
+  (defstrand init 2 (m m) (a a) (b b) (psk psk) (k k))
+  (defstrand resp 2 (m m-0) (a a) (b b-0) (psk psk) (k k-0))
+  (precedes ((1 1) (0 1)))
+  (non-orig psk)
+  (operation encryption-test (added-strand resp 2)
+    (enc &quot;hello-received&quot; a psk) (0 1))
+  (label 7)
+  (parent 6)
+  (unrealized (1 0))
+  (comment &quot;2 in cohort - 2 not yet seen&quot;))</pre>
+
+<p id="k8">Item <a href="#t6">8</a>, Parent: <a href="#k7">7</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 139.920 189.960 Q 92.940 189.960 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k-0 m-0) (enc &quot;hello&quot; a b psk))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 39.960 114.960 Q 86.940 114.960 133.920 114.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m-0) (a a) (b b) (psk psk) (k k-0))</title>
+   <text x='139.920' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text
+   x='89.940' y='39.960'
+   style='text-anchor: middle;'>tls 8 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (m m-0 text) (a b name) (psk k k-0 skey))
+  (defstrand init 2 (m m) (a a) (b b) (psk psk) (k k))
+  (defstrand resp 2 (m m-0) (a a) (b b) (psk psk) (k k-0))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (non-orig psk)
+  (operation encryption-test (displaced 2 0 init 1)
+    (enc &quot;hello&quot; a b-0 psk) (1 0))
+  (label 8)
+  (parent 7)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (psk psk) (k k) (m m))))
+  (origs))</pre>
+
+<p id="k9">Item <a href="#t6">9</a>, Parent: <a href="#k7">7</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='279.840pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 279.840 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 239.880 114.960 Q 192.900 114.960 145.920 114.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(cat (enc k-1 m-1) (enc &quot;hello&quot; a b-0 psk))</title>
+   <circle cx='239.880' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 139.920 189.960 Q 92.940 189.960 45.960 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(cat (enc k-0 m-0) (enc &quot;hello&quot; a b-0 psk))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle style='fill: blue;' cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m-1) (a a) (b b-0) (psk psk) (k k-1))</title>
+   <text x='239.880' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((m m-0) (a a) (b b-0) (psk psk) (k k-0))</title>
+   <text x='139.920' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <text
+   x='139.920' y='39.960'
+   style='text-anchor: middle;'>tls 9 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (m m-0 m-1 text) (a b b-0 name) (psk k k-0 k-1 skey))
+  (defstrand init 2 (m m) (a a) (b b) (psk psk) (k k))
+  (defstrand resp 2 (m m-0) (a a) (b b-0) (psk psk) (k k-0))
+  (defstrand init 1 (m m-1) (a a) (b b-0) (psk psk) (k k-1))
+  (precedes ((1 1) (0 1)) ((2 0) (1 0)))
+  (non-orig psk)
+  (operation encryption-test (added-strand init 1)
+    (enc &quot;hello&quot; a b-0 psk) (1 0))
+  (label 9)
+  (parent 7)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (psk psk) (k k) (m m))))
+  (origs))</pre>
+
+<p id="t10">Tree <a href="#top">10</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 79.920' font-size='12.000'>
+  <text
+   x='89.880' y='26.040'
+   style='font-weight: bold; text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k11&quot;, &quot;_self&quot;)'>11</text>
+  <line
+   x1='39.960' y1='39.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k10&quot;, &quot;_self&quot;)'>10</text>
+  </svg></div>
+
+<pre>(defprotocol tls diffie-hellman
+  (defrole init
+    (vars (a b name) (m text) (psk k skey))
+    (trace (send (cat (enc k m) (enc &quot;hello&quot; a b psk)))
+      (recv (enc &quot;hello-received&quot; a psk))))
+  (defrole resp
+    (vars (a b name) (m text) (psk k skey))
+    (trace (recv (cat (enc k m) (enc &quot;hello&quot; a b psk)))
+      (send (enc &quot;hello-received&quot; a psk)))))</pre>
+
+<p id="k10">Item <a href="#t10">10</a>, Child: <a href="#k11">11</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='79.920pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 79.920 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text x='39.960' y='39.960' style='text-anchor: middle;'>tls 10</text>
+  </svg></div>
+
+<pre>(defskeleton tls
+  (vars (m text) (a b name) (psk k skey))
+  (defstrand resp 2 (m m) (a a) (b b) (psk psk) (k k))
+  (non-orig psk)
+  (label 10)
+  (unrealized (0 0))
+  (origs)
+  (comment &quot;1 in cohort - 1 not yet seen&quot;))</pre>
+
+<p id="k11">Item <a href="#t10">11</a>, Parent: <a href="#k10">10</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='229.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 229.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='114.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 139.920 114.960 Q 92.940 114.960 45.960 114.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(cat (enc k-0 m-0) (enc &quot;hello&quot; a b psk))</title>
+   <circle cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>(enc &quot;hello-received&quot; a psk)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>(cat (enc k m) (enc &quot;hello&quot; a b psk))</title>
+   <circle style='fill: blue;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g><title>((m m-0) (a a) (b b) (psk psk) (k k-0))</title>
+   <text x='139.920' y='77.460' style='text-anchor: middle;'>init</text>
+   </g>
+  <g><title>((m m) (a a) (b b) (psk psk) (k k))</title>
+   <text x='39.960' y='77.460' style='text-anchor: middle;'>resp</text>
+   </g>
+  <text
+   x='89.940' y='39.960'
+   style='text-anchor: middle;'>tls 11 (realized)</text></svg></div>
+
+<pre>(defskeleton tls
+  (vars (m m-0 text) (a b name) (psk k k-0 skey))
+  (defstrand resp 2 (m m) (a a) (b b) (psk psk) (k k))
+  (defstrand init 1 (m m-0) (a a) (b b) (psk psk) (k k-0))
+  (precedes ((1 0) (0 0)))
+  (non-orig psk)
+  (operation encryption-test (added-strand init 1) (enc &quot;hello&quot; a b psk)
+    (0 0))
+  (label 11)
+  (parent 10)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (psk psk) (k k) (m m))))
+  (origs))</pre>
+
+</body>
+</html>
